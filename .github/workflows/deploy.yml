@@ -1,0 +1,56 @@
+# .github/workflows/deploy.yml
+
+name: Deploy to Cloudflare Workers
+
+# 触发条件：当有代码 push 到 main 分支时自动运行
+on:
+  push:
+    branches:
+      - main
+  # 也可以手动触发
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      # 第1步：签出你的代码
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 第2步：安装Node.js (如果你的项目需要构建步骤)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # 使用一个合适的Node.js版本
+      - name: Install dependencies
+        run: |
+          npm install -g wrangler
+          npm install # 如果有依赖，取消这行注释
+
+      # 第3步：从模板生成 wrangler.toml 文件，并替换密钥
+      - name: Generate wrangler.toml
+        run: |
+          # 复制模板文件为正式的配置文件
+          cp wrangler.toml wrangler.toml
+          
+      - name: Upload Secrets to Cloudflare
+        run: |
+          # 使用管道将GitHub Secret的值传递给wrangler secret put命令
+          # 格式: echo "SECRET_VALUE" | wrangler secret put SECRET_NAME
+          echo "${{ secrets.B2_APPLICATION_KEY }}" | wrangler secret put B2_APPLICATION_KEY
+          echo "${{ secrets.B2_ENDPOINT }}" | wrangler secret put B2_ENDPOINT
+        env:
+          # wrangler命令需要认证信息，这些信息必须作为环境变量提供
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+
+      # 第4步：使用官方的 wrangler-action 进行部署
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          # 传入 API Token
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          # accountId 会自动从环境变量或 wrangler.toml 中读取，但明确指定更可靠
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
