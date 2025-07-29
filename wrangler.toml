@@ -9,8 +9,6 @@ main = "index.js"
 # You should set it as a secret in the Cloudflare dashboard or at the command line:
 # echo "<your b2 application key>" | wrangler secret put B2_APPLICATION_KEY
 [vars]
-B2_APPLICATION_KEY_ID = "__B2_APPLICATION_KEY_ID__"
-B2_ENDPOINT = "__B2_ENDPOINT__"
 # Set BUCKET_NAME to:
 #   "A Backblaze B2 bucket name" - direct all requests to the specified bucket
 #   "$path" - use the initial segment in the incoming URL path as the bucket name
