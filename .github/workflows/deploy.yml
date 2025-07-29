@@ -35,6 +35,7 @@ jobs:
           # 使用管道将GitHub Secret的值传递给wrangler secret put命令
           # 格式: echo "SECRET_VALUE" | wrangler secret put SECRET_NAME
           echo "${{ secrets.B2_APPLICATION_KEY }}" | wrangler secret put B2_APPLICATION_KEY
+          echo "${{ secrets.B2_APPLICATION_KEY_ID }}" | wrangler secret put B2_APPLICATION_KEY_ID
           echo "${{ secrets.B2_ENDPOINT }}" | wrangler secret put B2_ENDPOINT
         env:
           # wrangler命令需要认证信息，这些信息必须作为环境变量提供
