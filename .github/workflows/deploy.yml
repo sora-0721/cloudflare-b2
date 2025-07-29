@@ -29,12 +29,7 @@ jobs:
           npm install -g wrangler
           npm install # 如果有依赖，取消这行注释
 
-      # 第3步：从模板生成 wrangler.toml 文件，并替换密钥
-      - name: Generate wrangler.toml
-        run: |
-          # 复制模板文件为正式的配置文件
-          cp wrangler.toml wrangler.toml
-          
+      # 第3步：添加机密变量
       - name: Upload Secrets to Cloudflare
         run: |
           # 使用管道将GitHub Secret的值传递给wrangler secret put命令
